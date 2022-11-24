@@ -16,7 +16,7 @@ namespace TaskTracker_BL.Profiles
         public UserTaskProfile()
         {
             CreateMap<CreateUserTaskDto, UserTask>()
-                .ForMember(x => x.Status, opt => opt.MapFrom(t=>Enum.Parse<TaskTracker_DAL.TaskStatus>(t.Status)));
+                .ForMember(x => x.Status, opt => opt.MapFrom(t=>Enum.Parse<TaskTracker_DAL.UserTaskStatus>(t.Status)));
 
             CreateMap<UserTask, UserTaskDto>()
                 .ForMember(x => x.Status, opt => opt.MapFrom(t => t.Status.ToString()));

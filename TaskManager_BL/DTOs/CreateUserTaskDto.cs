@@ -7,7 +7,7 @@ namespace TaskTracker_BL.DTOs
     {
         [StringLength(20, MinimumLength = 1)]
         [Required]
-        public string? Name { get; set; }
+        public string? Title { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

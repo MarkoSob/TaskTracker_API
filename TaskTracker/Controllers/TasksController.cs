@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskTracker_BL.Services.TaskTrackerService;
+using TaskTracker_BL.Services.TasksService;
 using TaskTracker_BL.DTOs;
 
 namespace TaskTracker.Controllers
@@ -8,23 +8,27 @@ namespace TaskTracker.Controllers
     [ApiController]
     [Route("[controller]")]
   
-    public class TaskTrackerController : ControllerBase
+    public class TasksController : ControllerBase
     {
-        private readonly ITaskTrackerService _taskTrackerService;
+        private readonly ITasksService _taskTrackerService;
 
-        public TaskTrackerController(ITaskTrackerService taskTrackerService)
+        public TasksController(ITasksService taskTrackerService)
         {
             _taskTrackerService = taskTrackerService;
         }
 
-        [HttpPost]
+        [HttpPost("createtask")]
         public async Task<UserTaskDto> CreateAsync(CreateUserTaskDto createUserTaskDto)
             => await _taskTrackerService.CreateAsync(createUserTaskDto);
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IEnumerable<UserTaskDto>> GetAllAsync()
             => await _taskTrackerService.GetAllAsync();
+
+        [HttpGet("usertasks/{userId}")]
+        public async Task<IEnumerable<UserTaskDto>> GetAllUSerTasksAsync(Guid userId)
+            => await _taskTrackerService.GetAllUserTasksAsync(userId);
 
         [HttpGet("{id}")]
         public async Task<UserTaskDto> GetByIdAsync(Guid id)

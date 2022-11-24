@@ -18,7 +18,7 @@ using TaskTracker_DAL.BasicGenericRepository;
 using TaskTracker_BL.Services.QueryService;
 using TaskTracker_BL.Services.GeneratorService;
 using TaskTracker_BL.Services.AdminService;
-using TaskTracker_BL.Services.TaskTrackerService;
+using TaskTracker_BL.Services.TasksService;
 using TaskTracker_BL.SignalR.MessageStorage;
 using TaskTracker_BL.SignalR.ConnectionStorage;
 using Microsoft.AspNetCore.SignalR;
@@ -28,6 +28,8 @@ using Hangfire.SqlServer;
 using TaskTracker_BL.SignalR;
 using TaskTracker_BL.Services.QuartzService;
 using TaskTracker_BL;
+using TaskTracker_BL.Services.CachingService;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, _, configuration) => configuration
@@ -58,7 +60,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISmtpService, GoogleSmtpService>();
 builder.Services.AddScoped<IQuartzService, QuartzService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddScoped<ITaskTrackerService, TaskTrackerService>();
+builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped(typeof(IBasicGenericRepository<>), typeof(BasicGenericRepository<>));
 
@@ -72,7 +74,17 @@ builder.Services.AddSingleton<IConnectionStorage, ConnectionStorage>();
 builder.Services.AddSingleton<IMessageStorage, MessageStorage>();
 builder.Services.AddSingleton<IUserIdProvider, AppUser>();
 
+builder.Services.AddCors(x =>
+    x.AddDefaultPolicy(x => x
+        .AllowAnyHeader()
+        .AllowAnyOrigin()
+        .AllowAnyMethod()));
+
 builder.Services.AddSignalR();
+
+builder.Services.AddScoped< ICachingService, CachingService>();
+builder.Services.AddScoped<IConnectionMultiplexer>(
+        x => ConnectionMultiplexer.Connect("localhost:5002"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -169,6 +181,7 @@ builder.Services.AddHangfire((configuration => configuration
 builder.Services.AddHangfireServer();
 var app = builder.Build();
 
+app.UseCors();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
