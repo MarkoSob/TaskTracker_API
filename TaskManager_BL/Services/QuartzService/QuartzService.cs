@@ -2,6 +2,7 @@
 using Quartz;
 using System.Reflection;
 using TaskTracker_BL.DTOs;
+using TaskTracker_BL.Quartz_Jobs;
 
 namespace TaskTracker_BL.Services.QuartzService
 {

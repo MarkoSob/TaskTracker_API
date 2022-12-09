@@ -24,7 +24,7 @@ namespace TaskTracker_BL.Services.TasksService
 
         public async Task<UserTaskDto> CreateAsync(CreateUserTaskDto createUserTaskDto)
         {
-            User user =  _genericUserRepository.GetByPredicate(x=>x.Email == createUserTaskDto.UserEmail).FirstOrDefault();
+            User user =  _genericUserRepository.GetByPredicate(x=>x.Email == createUserTaskDto.UserEmail).FirstOrDefault();       
             UserTask newUserTask = _mapper.Map<UserTask>(createUserTaskDto);
             newUserTask.User = user;
             newUserTask.Status = UserTaskStatus.New;
@@ -35,12 +35,13 @@ namespace TaskTracker_BL.Services.TasksService
             _mapper.Map<IEnumerable<UserTaskDto>>(await _genericUserTaskRepository.GetAllAsync());
         
 
-        public async Task<IEnumerable<UserTaskDto>> GetAllUserTasksAsync(Guid id) =>
-            _mapper.Map<IEnumerable<UserTaskDto>>(_genericUserTaskRepository.GetByPredicate(x => x.UserId == id));
+        public async Task<IEnumerable<UserTaskDto>> GetAllUserTasksAsync(string email) =>
+            _mapper.Map<IEnumerable<UserTaskDto>>(_genericUserTaskRepository.GetByPredicate(x => x.User.Email == email));
         
 
-        public async Task<UserTaskDto> GetByIdAsync(Guid id)
-            => _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.GetByIdAsync(id));
+        public async Task<UserTaskDto> GetByIdAsync(Guid id) =>
+            _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.GetByIdAsync(id));
+   
 
         public async Task<UserTaskDto> UpdateAsync(Guid id, CreateUserTaskDto createUserTaskDto)
         {
@@ -50,6 +51,7 @@ namespace TaskTracker_BL.Services.TasksService
             userTask.User = user;
             return _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.UpdateAsync(userTask));
         }
+
 
         public async Task<UserTaskDto> DeleteAsync(Guid id)
             => _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.DeleteAsync(id));

@@ -3,7 +3,7 @@ using Quartz;
 using TaskTracker.Core;
 using TaskTracker_BL.SignalR;
 
-namespace TaskTracker_BL
+namespace TaskTracker_BL.Quartz_Jobs
 {
     public class SendRegularMessageToClientsJob : IJob
     {

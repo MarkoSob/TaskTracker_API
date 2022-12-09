@@ -2,9 +2,10 @@
 {
     public enum UserTaskStatus
     {
-        Canceled = 0,
-        New = 1,
-        InProgress = 2,
-        Completed = 3,
+        Canceled,
+        New,
+        InProgress,
+        Completed,
+        Overdue,
     }
 }

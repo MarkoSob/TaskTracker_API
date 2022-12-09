@@ -22,7 +22,7 @@ namespace TaskTracker_BL.SignalR
             _authService = authService;
         }
 
-        public async Task<string?> Login(string userLogin, string password)
+        public async Task<string> Login(string userLogin, string password)
         {
             CredentialsDto credentialsDto = new CredentialsDto()
             {

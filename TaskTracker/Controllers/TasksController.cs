@@ -17,18 +17,21 @@ namespace TaskTracker.Controllers
             _taskTrackerService = taskTrackerService;
         }
 
-        [HttpPost("createtask")]
+        [HttpPost]
         public async Task<UserTaskDto> CreateAsync(CreateUserTaskDto createUserTaskDto)
             => await _taskTrackerService.CreateAsync(createUserTaskDto);
 
-        //[Authorize]
         [HttpGet]
         public async Task<IEnumerable<UserTaskDto>> GetAllAsync()
-            => await _taskTrackerService.GetAllAsync();
-
-        [HttpGet("usertasks/{userId}")]
-        public async Task<IEnumerable<UserTaskDto>> GetAllUSerTasksAsync(Guid userId)
-            => await _taskTrackerService.GetAllUserTasksAsync(userId);
+        {
+            //Response.Headers.Add("X-Total-Count", "100");
+            return await _taskTrackerService.GetAllAsync();
+        }
+         
+        [Authorize]
+        [HttpGet("usertasks/{email}")]
+        public async Task<IEnumerable<UserTaskDto>> GetAllUSerTasksAsync(string email)
+            => await _taskTrackerService.GetAllUserTasksAsync(email);
 
         [HttpGet("{id}")]
         public async Task<UserTaskDto> GetByIdAsync(Guid id)

@@ -16,6 +16,7 @@ namespace TaskTracker_BL_Tests
         private Mock<IRolesHelper> _rolesHelper;
         private Mock<IBasicGenericRepository<UserRoles>> _userRolesRepository;
         private Mock<IGenericRepository<Role>> _rolesRepository;
+        private Mock<IGenericRepository<User>> _userRepository;
 
         [SetUp]
         public void Setup()
@@ -28,7 +29,8 @@ namespace TaskTracker_BL_Tests
             _rolesHelper = new Mock<IRolesHelper>();
             _userRolesRepository = new Mock<IBasicGenericRepository<UserRoles>>();
             _rolesRepository = new Mock<IGenericRepository<Role>>();
-           
+            _userRepository = new Mock<IGenericRepository<User>>();
+
         }
 
         public AdminService GetAdminService()
@@ -36,7 +38,9 @@ namespace TaskTracker_BL_Tests
             return new AdminService(
                 _userRolesRepository.Object,
                 _rolesRepository.Object,
-                _rolesHelper.Object);
+                _userRepository.Object,
+                _rolesHelper.Object
+                );
         }
 
         [Test]

@@ -10,14 +10,18 @@ namespace TaskTracker_BL.Services.AdminService
         private readonly IBasicGenericRepository<UserRoles> _userRolesRepository;
         private readonly IGenericRepository<Role> _roleRepository;
         private readonly IRolesHelper _rolesHelper;
+        private readonly IGenericRepository<User> _userRepository;
 
         public AdminService(
             IBasicGenericRepository<UserRoles> userRolesRepository,
             IGenericRepository<Role> roleRepository,
-            IRolesHelper rolesHelper)
+            IGenericRepository<User> userRepository,
+            IRolesHelper rolesHelper
+            )
         {
             _userRolesRepository = userRolesRepository;
             _roleRepository = roleRepository;
+            _userRepository = userRepository;
             _rolesHelper = rolesHelper;
         }
 
@@ -42,6 +46,30 @@ namespace TaskTracker_BL.Services.AdminService
                 return await _userRolesRepository.DeleteAsync(userRole);
             }
 
+            return false;
+        }
+
+        public async Task<bool> BlockUserAsync(string email)
+        {
+            User currentUser = _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
+            if(currentUser != null)
+            {
+                currentUser.IsBlocked = true;
+                await _userRepository.UpdateAsync(currentUser);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> UnblockUserAsync(string email)
+        {
+            User currentUser = _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
+            if (currentUser != null)
+            {
+                currentUser.IsBlocked = false;
+                await _userRepository.UpdateAsync(currentUser);
+                return true;
+            }
             return false;
         }
     }

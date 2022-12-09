@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskTracker_BL.DTOs;
 using TaskTracker_BL.Services;
 
@@ -9,10 +10,10 @@ namespace TaskTracker.Controllers
     public class AuthController : ControllerBase
     {
         private const string ConfirmationRoute = "confrimation";
-       
+
         private readonly IAuthService _authService;
         private readonly ILogger<AuthController> _logger;
-      
+
         public AuthController(IAuthService authService,
             ILogger<AuthController> logger)
         {
@@ -25,11 +26,26 @@ namespace TaskTracker.Controllers
         {
             var contoller = Request.RouteValues["controller"]!.ToString();
             UriBuilder uriBuilder = new UriBuilder(
-                Request.Scheme, 
-                Request.Host.Host, 
-                Request.Host.Port!.Value, 
+                Request.Scheme,
+                Request.Host.Host,
+                Request.Host.Port!.Value,
                 contoller + "/" + ConfirmationRoute);
             await _authService.RegisterAsync(registrationDto, uriBuilder);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPut("changepassword/{email}")]
+        public async Task<IActionResult> ChangePasswordAsync(string email, string currentPassword, string newPassword)
+        {
+            await _authService.ChangePasswordAsync(email, currentPassword, newPassword);
+            return Ok();
+        }
+
+        [HttpPut("resetpassword")]
+        public async Task<IActionResult> ResetPasswordAsync(string email)
+        {
+            await _authService.ResetPasswordAsync(email);
             return Ok();
         }
 

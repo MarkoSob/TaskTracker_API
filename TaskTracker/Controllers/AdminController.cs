@@ -27,10 +27,20 @@ namespace TaskTracker.Controllers
 
         [Authorize(Roles = RolesList.Admin)]
         [HttpPost("RemoveRole")]
-        public async Task<IActionResult> RemoveRoleAsync(Guid id, string role)
-        {
-            return Ok(await _adminService.RemoveRoleAsync(id, role));
-        }
+        public async Task<IActionResult> RemoveRoleAsync(Guid id, string role) =>
+            Ok(await _adminService.RemoveRoleAsync(id, role));
+    
+
+        //[Authorize(Roles = RolesList.Admin)]
+        [HttpPut("BlockUser")]
+        public async Task<IActionResult> BlockUserAsync(string email) =>
+            Ok(await _adminService.BlockUserAsync(email));
+
+       // [Authorize(Roles = RolesList.Admin)]
+        [HttpPut("UnblockUser")]
+        public async Task<IActionResult> UnblockUserAsync(string email) =>
+           Ok(await _adminService.UnblockUserAsync(email));
+
 
     }
 }

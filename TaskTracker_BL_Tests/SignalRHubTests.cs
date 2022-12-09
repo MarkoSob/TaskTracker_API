@@ -44,24 +44,30 @@ namespace TaskTracker_BL_Tests
             string connectionId = _fixture.Create<string>();
             string userNickName = _fixture.Create<string>();
 
-            _contextMock.Setup(x => x.ConnectionId).Returns(connectionId).Verifiable();
-            _connectionStorage.Setup(x => x.GetUserNickname(It.Is<string>(x => x == connectionId))).Returns(userNickName).Verifiable();
+            _contextMock.Setup(x
+                => x.ConnectionId).Returns(connectionId).Verifiable();
+            _connectionStorage.Setup(x 
+                => x.GetUserNickname(It.Is<string>(x => x == connectionId))).Returns(userNickName).Verifiable();
 
-            _connectionStorage.Setup(x => x.GetPublicUserInfo(connectionId))
+            _connectionStorage.Setup(x 
+                => x.GetPublicUserInfo(connectionId))
                 .Returns(new PublicUserInfo { Nickname = userNickName })
                 .Verifiable();
 
-            _clientsMock.Setup(x => x.Others.GetMessage(It.Is<MessageSnapshot>(x =>
-              x.IsPersonal == false &&
-              x.Message == message &&
-              x.SenderUserInfo.Nickname == userNickName &&
-              x.ReceiverNickname == null)))
+            _clientsMock.Setup(x 
+                => x.Others.GetMessage(It.Is<MessageSnapshot>(x => 
+                x.IsPersonal == false 
+                && x.Message == message 
+                && x.SenderUserInfo.Nickname == userNickName 
+                && x.ReceiverNickname == null)))
                 .Verifiable();
 
-            _messageStorage.Setup(x => x.Add(It.Is<MessageSnapshot>(x =>
-            x.SenderUserInfo.Nickname == userNickName &&
-            x.Message == message &&
-            x.IsPersonal == false && x.ReceiverNickname == null)))
+            _messageStorage.Setup(x 
+                => x.Add(It.Is<MessageSnapshot>(x 
+                => x.SenderUserInfo.Nickname == userNickName 
+                && x.Message == message 
+                && x.IsPersonal == false 
+                && x.ReceiverNickname == null)))
                 .Verifiable();
 
             _hub.SendMesasageToAll(message);
@@ -80,10 +86,16 @@ namespace TaskTracker_BL_Tests
             string senderNickName = _fixture.Create<string>();
             string receiverNickName = _fixture.Create<string>();
 
-            _contextMock.Setup(x => x.ConnectionId).Returns(connectionId).Verifiable();
+            _contextMock.Setup(x
+                => x.ConnectionId).Returns(connectionId).Verifiable();
 
-            _connectionStorage.Setup(x => x.GetConnectionId(It.Is<string>(x => x == receiverNickName))).Returns(connectionId).Verifiable();
-            _connectionStorage.Setup(x => x.GetUserNickname(It.Is<string>(x => x == connectionId))).Returns(senderNickName).Verifiable();
+            _connectionStorage.Setup(x 
+                => x.GetConnectionId(It.Is<string>(x => x == receiverNickName)))
+                .Returns(connectionId).Verifiable();
+
+            _connectionStorage.Setup(x 
+                => x.GetUserNickname(It.Is<string>(x => x == connectionId)))
+                .Returns(senderNickName).Verifiable();
 
             _connectionStorage.Setup(x => x.GetPublicUserInfo(connectionId))
                 .Returns(new PublicUserInfo { Nickname = senderNickName })

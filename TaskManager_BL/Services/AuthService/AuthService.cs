@@ -24,8 +24,7 @@ namespace TaskTracker_BL.Services
         private readonly IBasicGenericRepository<UserRoles> _userRolesRepository;
         private readonly IRolesHelper _rolesHelper;
         private readonly IQueryService _queryService;
-        IGeneratorService _generatorService;
-
+        private readonly IGeneratorService _generatorService;
         public AuthService(IGenericRepository<User> userRepository,
             IMapper mapper, ITokenService tokenService,
             IHashService hashService, ISmtpService googleSmtpService,
@@ -67,6 +66,33 @@ namespace TaskTracker_BL.Services
 
         }
 
+        public async Task<bool> ChangePasswordAsync(string email, string currentPasswoord, string newPassword)
+        {
+            User currentUser =  _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
+            if(currentUser.Password == _hashService.GetHash(currentPasswoord))
+            {
+                currentUser.Password = _hashService.GetHash(newPassword);
+                await _userRepository.UpdateAsync(currentUser);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> ResetPasswordAsync(string email)
+        {
+            User currentUser = _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
+            if (currentUser != null)
+            {
+                string password = _generatorService.GetRandomKey();
+                currentUser.Password = _hashService.GetHash(password);
+                await _userRepository.UpdateAsync(currentUser);
+
+                _googleSmtpService.SendEmailAsync(currentUser.Email, "New temporary password", "Your new temporary password: " + password);
+                return true;
+            }
+            return false;
+        }
+
         public async Task<string> LoginAsync(CredentialsDto credentialsDto)
         {
             var userWithRolesDto = _userRepository
@@ -80,7 +106,9 @@ namespace TaskTracker_BL.Services
             if (userWithRolesDto != null)
             {
                 if (_hashService.ValidateHash(credentialsDto.Password!, userWithRolesDto.User.Password!))
+                {
                     return _tokenService.GenerateToken(userWithRolesDto.User.Email!, userWithRolesDto.UserRoles);
+                }
             }
             return null;
         }
@@ -105,9 +133,5 @@ namespace TaskTracker_BL.Services
             }
             return false;
         }
-
-
-
     }
-
 }

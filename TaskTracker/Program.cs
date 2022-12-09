@@ -82,9 +82,6 @@ builder.Services.AddCors(x =>
 
 builder.Services.AddSignalR();
 
-builder.Services.AddScoped< ICachingService, CachingService>();
-builder.Services.AddScoped<IConnectionMultiplexer>(
-        x => ConnectionMultiplexer.Connect("localhost:5002"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -145,6 +142,10 @@ builder.Services.AddSwaggerGen(c => {
         }
     });
 });
+
+builder.Services.AddScoped<ICachingService, CachingService>();
+builder.Services.AddScoped<IConnectionMultiplexer>(
+        x => ConnectionMultiplexer.Connect("localhost:5002"));
 
 builder.Services.AddQuartz(x =>
 {
