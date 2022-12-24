@@ -49,28 +49,17 @@ namespace TaskTracker_BL.Services.AdminService
             return false;
         }
 
-        public async Task<bool> BlockUserAsync(string email)
+        public async Task<bool> SetUserBlockedStatusAsync(string email, bool isBLocked)
         {
             User currentUser = _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
             if(currentUser != null)
             {
-                currentUser.IsBlocked = true;
+                currentUser.IsBlocked = isBLocked;
                 await _userRepository.UpdateAsync(currentUser);
                 return true;
             }
             return false;
         }
 
-        public async Task<bool> UnblockUserAsync(string email)
-        {
-            User currentUser = _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
-            if (currentUser != null)
-            {
-                currentUser.IsBlocked = false;
-                await _userRepository.UpdateAsync(currentUser);
-                return true;
-            }
-            return false;
-        }
     }
 }

@@ -32,15 +32,11 @@ namespace TaskTracker.Controllers
     
 
         //[Authorize(Roles = RolesList.Admin)]
-        [HttpPut("BlockUser")]
-        public async Task<IActionResult> BlockUserAsync(string email) =>
-            Ok(await _adminService.BlockUserAsync(email));
+        [HttpPut("BlokedStatus")]
+        public async Task<IActionResult> SetUserBlockedStatusAsync(string email, bool isBlocked) =>
+            Ok(await _adminService.SetUserBlockedStatusAsync(email, isBlocked));
 
-       // [Authorize(Roles = RolesList.Admin)]
-        [HttpPut("UnblockUser")]
-        public async Task<IActionResult> UnblockUserAsync(string email) =>
-           Ok(await _adminService.UnblockUserAsync(email));
-
+       
 
     }
 }

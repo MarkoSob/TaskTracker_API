@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskTracker_DAL.Entities;
 using TaskTracker_DAL.BasicGenericRepository;
+using Microsoft.Extensions.Logging;
 
 namespace TaskTracker_DAL.GenericRepository
 {
     public class GenericRepository<T> : BasicGenericRepository<T> , IGenericRepository<T> where T : Entity, new()
     {
-        public GenericRepository(EfDbContext dbContext) :base(dbContext)
+        public GenericRepository(EfDbContext dbContext, ILogger<GenericRepository<T>> logger) :base(dbContext, logger)
         {}
 
         public override async Task<T> CreateAsync(T entity)
@@ -16,7 +17,7 @@ namespace TaskTracker_DAL.GenericRepository
         }
 
         public async Task<T> GetByIdAsync(Guid id) 
-            => await _dbSet.SingleOrDefaultAsync(x => x.Id == id);
+            => await _dbSet.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
         public async Task<T> UpdateAsync(T entity)
         {
@@ -29,7 +30,14 @@ namespace TaskTracker_DAL.GenericRepository
         {
             var entity = new T { Id = id };
             _dbContext.Entry(entity).State = EntityState.Deleted;
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch
+            {
+                _logger.LogError($"Can't delete task with id {id} as it doesn't exist");
+            }
             return entity;
         }
     }

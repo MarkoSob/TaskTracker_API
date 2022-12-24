@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 
@@ -8,11 +9,13 @@ namespace TaskTracker_DAL.BasicGenericRepository
     {
         protected readonly EfDbContext _dbContext;
         protected readonly DbSet<T> _dbSet;
+        protected readonly ILogger<BasicGenericRepository<T>> _logger;
 
-        public BasicGenericRepository(EfDbContext dbContext)
+        public BasicGenericRepository(EfDbContext dbContext, ILogger<BasicGenericRepository<T>> logger)
         {
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<T>();
+            _logger = logger;
         }
 
         public virtual async Task<T> CreateAsync(T entity)
@@ -26,7 +29,7 @@ namespace TaskTracker_DAL.BasicGenericRepository
             =>  _dbSet.Where(expression);
 
         public async Task<IEnumerable<T>> GetAllAsync()
-          => await _dbSet.ToListAsync();
+          => await _dbSet.AsNoTracking().ToListAsync();
 
         public async Task<bool> DeleteAsync(T entity)
         {
