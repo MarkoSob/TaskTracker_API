@@ -45,6 +45,7 @@ namespace TaskTracker_BL.Services.QuartzService
         {
             IScheduler scheduler = await _schedulerFactory.GetScheduler();
             JobKey key = new JobKey(jobName);
+
             await scheduler.PauseJob(key);
         }
 
@@ -52,6 +53,7 @@ namespace TaskTracker_BL.Services.QuartzService
         {
             IScheduler scheduler = await _schedulerFactory.GetScheduler();
             JobKey key = new JobKey(jobName);
+
             await scheduler.ResumeJob(key);
         }
 
@@ -59,6 +61,7 @@ namespace TaskTracker_BL.Services.QuartzService
         {
             IScheduler scheduler = await _schedulerFactory.GetScheduler();
             JobKey key = new JobKey(jobName);
+
             await scheduler.DeleteJob(key);
         }
 

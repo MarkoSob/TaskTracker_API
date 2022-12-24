@@ -81,6 +81,7 @@ namespace TaskTracker_BL.Services.TokenService
 
             Claim usernameClaim = identity.FindFirst(ClaimTypes.Name);
             username = usernameClaim.Value;
+
             return username;
         }
     }

@@ -115,6 +115,11 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add<ExceptionFilter>();
+});
+
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
@@ -192,7 +197,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<CustomErrorHandlingMiddleware>();
+//app.UseMiddleware<CustomErrorHandlingMiddleware>();
 app.MapHub<SignalRChatHub>("/chat");
 app.MapControllers();
 

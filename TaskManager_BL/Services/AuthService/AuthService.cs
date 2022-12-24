@@ -52,9 +52,13 @@ namespace TaskTracker_BL.Services
         {
             var dto = _mapper.Map<User>(registartionDto);
             dto.Password = _hashService.GetHash(dto.Password!);
+
             await _userRepository.CreateAsync(dto);
+
             string emailKey = _generatorService.GetRandomKey();
+
             _queryService.AddQueryParams(uriBuilder, _queryService.CreateQueryParams(dto.Email!, emailKey));
+
             await _emailStatusRepository.CreateAsync(
                 new EmailStatus
                 {
@@ -62,34 +66,42 @@ namespace TaskTracker_BL.Services
                     UserId = dto.Id,
                     Key = emailKey
                 });
-            await _googleSmtpService.SendEmailAsync(dto.Email!, "Email confirmation", uriBuilder.Uri.ToString());
 
+            await _googleSmtpService.SendEmailAsync(dto.Email!, "Email confirmation", uriBuilder.Uri.ToString());
         }
 
         public async Task<bool> ChangePasswordAsync(string email, string currentPasswoord, string newPassword)
         {
             User currentUser =  _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
-            if(currentUser.Password == _hashService.GetHash(currentPasswoord))
+
+            if (currentUser.Password == _hashService.GetHash(currentPasswoord))
             {
                 currentUser.Password = _hashService.GetHash(newPassword);
+
                 await _userRepository.UpdateAsync(currentUser);
+
                 return true;
             }
+
             return false;
         }
 
         public async Task<bool> ResetPasswordAsync(string email)
         {
             User currentUser = _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
+
             if (currentUser != null)
             {
                 string password = _generatorService.GetRandomKey();
                 currentUser.Password = _hashService.GetHash(password);
+
                 await _userRepository.UpdateAsync(currentUser);
 
                 _googleSmtpService.SendEmailAsync(currentUser.Email, "New temporary password", "Your new temporary password: " + password);
+
                 return true;
             }
+
             return false;
         }
 
@@ -103,6 +115,7 @@ namespace TaskTracker_BL.Services
                     UserRoles = x.Roles!.Select(x => x.Role!.Title)!
                 })
                 .FirstOrDefault();
+
             if (userWithRolesDto != null)
             {
                 if (_hashService.ValidateHash(credentialsDto.Password!, userWithRolesDto.User.Password!))
@@ -110,6 +123,7 @@ namespace TaskTracker_BL.Services
                     return _tokenService.GenerateToken(userWithRolesDto.User.Email!, userWithRolesDto.UserRoles);
                 }
             }
+
             return null;
         }
 
@@ -122,15 +136,20 @@ namespace TaskTracker_BL.Services
             if (emailStatus != null)
             {
                 emailStatus.IsConfirmed = true;
+
                 await _emailStatusRepository.UpdateAsync(emailStatus);
+
                 var roleId = _rolesHelper[RolesList.User];
+
                 await _userRolesRepository.CreateAsync(new UserRoles
                 {
                     UserId = emailStatus.UserId,
                     RoleId = roleId,
                 });
+
                 return true;
             }
+
             return false;
         }
     }
