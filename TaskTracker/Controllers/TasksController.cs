@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskTracker_BL.Services.TasksService;
 using TaskTracker_BL.DTOs;
+using TaskTracker.Core.QueryParameters;
 
 namespace TaskTracker.Controllers
 {
@@ -17,7 +18,7 @@ namespace TaskTracker.Controllers
             _taskTrackerService = taskTrackerService;
         }
 
-        [HttpPost]
+        [HttpPost("createtask")]
         public async Task<UserTaskDto> CreateAsync(CreateUserTaskDto createUserTaskDto)
             => await _taskTrackerService.CreateAsync(createUserTaskDto);
 
@@ -28,10 +29,15 @@ namespace TaskTracker.Controllers
             return await _taskTrackerService.GetAllAsync();
         }
          
+        //[Authorize]
+        //[HttpGet("usertasks/{email}")]
+        //public async Task<IEnumerable<UserTaskDto>> GetAllUserTasksAsync(string email)
+        //    => await _taskTrackerService.GetAllUserTasksAsync(email);
+
         [Authorize]
-        [HttpGet("usertasks/{email}")]
-        public async Task<IEnumerable<UserTaskDto>> GetAllUSerTasksAsync(string email)
-            => await _taskTrackerService.GetAllUserTasksAsync(email);
+        [HttpGet("UserTasks")]
+        public async Task<IEnumerable<UserTaskDto>> GetAllUserTasksByAsync(string email, [FromQuery] QueryParameters<UserTaskDto> parameters)
+            => await _taskTrackerService.GetTasksByTitle(email, parameters);
 
         [HttpGet("{id}")]
         public async Task<UserTaskDto> GetByIdAsync(Guid id)

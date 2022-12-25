@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
-
+using TaskTracker.Core.Extensions;
+using TaskTracker.Core.QueryParameters;
 
 namespace TaskTracker_DAL.BasicGenericRepository
 {

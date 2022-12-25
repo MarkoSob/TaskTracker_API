@@ -23,8 +23,4 @@
     <ProjectReference Include="..\TaskTracker_DAL\TaskTracker_DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EntityValidation\" />
-  </ItemGroup>
-
 </Project>

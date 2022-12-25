@@ -7,6 +7,7 @@ using TaskTracker_DAL;
 using TaskTracker_DAL.Entities;
 using TaskTracker_DAL.GenericRepository;
 using TaskTracker.Core.Exceptions.DataAccessExceptions;
+using TaskTracker.Core.QueryParameters;
 
 namespace TaskTracker_BL.Services.TasksService
 {
@@ -52,6 +53,17 @@ namespace TaskTracker_BL.Services.TasksService
         public async Task<IEnumerable<UserTaskDto>> GetAllUserTasksAsync(string email) =>
             _mapper.Map<IEnumerable<UserTaskDto>>(_genericUserTaskRepository.GetByPredicate(x => x.User.Email == email));
 
+        public async Task<IEnumerable<UserTaskDto>> GetTasksByTitle(string email, QueryParameters<UserTaskDto> parameters)
+        {
+            if (!string.IsNullOrEmpty(parameters.SearchTerm))
+            {
+                return _mapper.Map<IEnumerable<UserTaskDto>>(_genericUserTaskRepository
+                    .GetByPredicate(x => x.Title.Contains(parameters.SearchTerm) && x.User.Email == email).Sort(parameters.OrderBy));   
+            }
+
+            return _mapper.Map<IEnumerable<UserTaskDto>>(_genericUserTaskRepository.GetByPredicate(x => x.User.Email == email).Sort(parameters.OrderBy));
+        }
+            
 
         public async Task<UserTaskDto> GetByIdAsync(Guid? id)
         {

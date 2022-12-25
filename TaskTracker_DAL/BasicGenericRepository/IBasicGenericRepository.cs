@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using TaskTracker.Core.QueryParameters;
 
 namespace TaskTracker_DAL.BasicGenericRepository
 {
