@@ -23,6 +23,7 @@ namespace TaskTracker_DAL.BasicGenericRepository
         {
             _dbSet.Add(entity);
             await _dbContext.SaveChangesAsync();
+
             return entity;
         }
 
@@ -35,8 +36,8 @@ namespace TaskTracker_DAL.BasicGenericRepository
         public async Task<bool> DeleteAsync(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Deleted;
+
             return await _dbContext.SaveChangesAsync() != 0;
-           
         }
     }
 }

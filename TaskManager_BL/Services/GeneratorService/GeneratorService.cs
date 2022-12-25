@@ -7,7 +7,7 @@ namespace TaskTracker_BL.Services.GeneratorService
         public string GetRandomKey()
         {
             Random random = new Random();
-            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&*^?".ToLower();
+            string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&*?".ToLower();
             int length = random.Next(10, 20);
 
             StringBuilder result = new StringBuilder(string.Empty, length);

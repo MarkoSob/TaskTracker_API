@@ -36,7 +36,9 @@ namespace TaskTracker.Controllers
         public async Task<IActionResult> SetUserBlockedStatusAsync(string email, bool isBlocked) =>
             Ok(await _adminService.SetUserBlockedStatusAsync(email, isBlocked));
 
-       
-
+        [Authorize(Roles = RolesList.Admin)]
+        [HttpGet("Users")]
+        public async Task<IActionResult> GetAllUsers() =>
+            Ok(await _adminService.GetAllUsers());
     }
 }

@@ -64,7 +64,6 @@ namespace TaskTracker_BL.Services.TasksService
             return _mapper.Map<IEnumerable<UserTaskDto>>(_genericUserTaskRepository.GetByPredicate(x => x.User.Email == email).Sort(parameters.OrderBy));
         }
             
-
         public async Task<UserTaskDto> GetByIdAsync(Guid? id)
         {
             if (id is null)
@@ -106,6 +105,5 @@ namespace TaskTracker_BL.Services.TasksService
 
             return _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.DeleteAsync(id));
         }
-    }
-            
+    }         
 }

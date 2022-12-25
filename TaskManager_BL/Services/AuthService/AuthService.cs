@@ -50,24 +50,25 @@ namespace TaskTracker_BL.Services
 
         public async Task RegisterAsync(RegistrationDto registartionDto, UriBuilder uriBuilder)
         {
-            var dto = _mapper.Map<User>(registartionDto);
-            dto.Password = _hashService.GetHash(dto.Password!);
+            var user = _mapper.Map<User>(registartionDto);
+            user.CreationDate = DateTime.Now;
+            user.Password = _hashService.GetHash(user.Password!);
 
-            await _userRepository.CreateAsync(dto);
+            await _userRepository.CreateAsync(user);
 
             string emailKey = _generatorService.GetRandomKey();
 
-            _queryService.AddQueryParams(uriBuilder, _queryService.CreateQueryParams(dto.Email!, emailKey));
+            _queryService.AddQueryParams(uriBuilder, _queryService.CreateQueryParams(user.Email!, emailKey));
 
             await _emailStatusRepository.CreateAsync(
                 new EmailStatus
                 {
                     IsConfirmed = false,
-                    UserId = dto.Id,
+                    UserId = user.Id,
                     Key = emailKey
                 });
 
-            await _googleSmtpService.SendEmailAsync(dto.Email!, "Email confirmation", uriBuilder.Uri.ToString());
+            await _googleSmtpService.SendEmailAsync(user.Email!, "Email confirmation", uriBuilder.Uri.ToString());
         }
 
         public async Task<bool> ChangePasswordAsync(string email, string currentPasswoord, string newPassword)

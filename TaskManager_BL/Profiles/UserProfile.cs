@@ -8,9 +8,11 @@ namespace TaskTracker_BL.Profiles
     {
         public UserProfile()
         {
-            CreateMap<RegistrationDto, User>()
+            CreateMap<RegistrationDto, User>();
+
+            CreateMap<User, UserForAdminViewDto>()
                 .ForMember(x => x.CreationDate, opt => opt.MapFrom(
-                    d=>DateTime.Now.Date));
+                    d => d.CreationDate.ToString("MM.dd.yyyy HH:mm")));
         }
     }
 }

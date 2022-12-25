@@ -19,14 +19,14 @@ namespace TaskTracker.Controllers
         }
 
         [HttpPost("createtask")]
-        public async Task<UserTaskDto> CreateAsync(CreateUserTaskDto createUserTaskDto)
-            => await _taskTrackerService.CreateAsync(createUserTaskDto);
+        public async Task<IActionResult> CreateAsync(CreateUserTaskDto createUserTaskDto)
+            => Ok(await _taskTrackerService.CreateAsync(createUserTaskDto));
 
         [HttpGet]
-        public async Task<IEnumerable<UserTaskDto>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             //Response.Headers.Add("X-Total-Count", "100");
-            return await _taskTrackerService.GetAllAsync();
+            return Ok(await _taskTrackerService.GetAllAsync());
         }
          
         //[Authorize]
@@ -36,19 +36,19 @@ namespace TaskTracker.Controllers
 
         [Authorize]
         [HttpGet("UserTasks")]
-        public async Task<IEnumerable<UserTaskDto>> GetAllUserTasksByAsync(string email, [FromQuery] QueryParameters<UserTaskDto> parameters)
-            => await _taskTrackerService.GetTasksByTitle(email, parameters);
+        public async Task<IActionResult> GetAllUserTasksByAsync(string email, [FromQuery] QueryParameters<UserTaskDto> parameters)
+            => Ok(await _taskTrackerService.GetTasksByTitle(email, parameters));
 
         [HttpGet("{id}")]
-        public async Task<UserTaskDto> GetByIdAsync(Guid id)
-            => await _taskTrackerService.GetByIdAsync(id);
+        public async Task<IActionResult> GetByIdAsync(Guid id)
+            => Ok(await _taskTrackerService.GetByIdAsync(id));
 
         [HttpPut("{id}")]
-        public async Task<UserTaskDto> UpdateAsync(Guid id, CreateUserTaskDto createUserTaskDto)
-            => await _taskTrackerService.UpdateAsync(id, createUserTaskDto);
+        public async Task<IActionResult> UpdateAsync(Guid id, CreateUserTaskDto createUserTaskDto)
+            => Ok(await _taskTrackerService.UpdateAsync(id, createUserTaskDto));
 
         [HttpDelete("{id}")]
-        public async Task<UserTaskDto> DeleteAsync(Guid id)
-            => await _taskTrackerService.DeleteAsync(id);
+        public async Task<IActionResult> DeleteAsync(Guid id)
+            => Ok(await _taskTrackerService.DeleteAsync(id));
     }
 }

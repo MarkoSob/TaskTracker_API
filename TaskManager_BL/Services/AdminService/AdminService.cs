@@ -2,6 +2,8 @@
 using TaskTracker_DAL.GenericRepository;
 using TaskTracker_DAL.RolesHelper;
 using TaskTracker_DAL.BasicGenericRepository;
+using TaskTracker_BL.DTOs;
+using AutoMapper;
 
 namespace TaskTracker_BL.Services.AdminService
 {
@@ -11,21 +13,24 @@ namespace TaskTracker_BL.Services.AdminService
         private readonly IGenericRepository<Role> _roleRepository;
         private readonly IRolesHelper _rolesHelper;
         private readonly IGenericRepository<User> _userRepository;
+        private readonly IMapper _mapper;
 
         public AdminService(
             IBasicGenericRepository<UserRoles> userRolesRepository,
             IGenericRepository<Role> roleRepository,
             IGenericRepository<User> userRepository,
-            IRolesHelper rolesHelper
+            IRolesHelper rolesHelper,
+            IMapper mapper
             )
         {
             _userRolesRepository = userRolesRepository;
             _roleRepository = roleRepository;
             _userRepository = userRepository;
             _rolesHelper = rolesHelper;
+            _mapper = mapper;
         }
 
-        public async Task GiveRoleAsync(Guid id, string role)
+        public async Task<bool> GiveRoleAsync(Guid id, string role)
         {
             var roleId = _rolesHelper[role];
 
@@ -34,6 +39,8 @@ namespace TaskTracker_BL.Services.AdminService
                 UserId = id,
                 RoleId = roleId
             });
+
+            return true;
         }
         public async Task<bool> RemoveRoleAsync(Guid id, string role)
         {
@@ -61,5 +68,7 @@ namespace TaskTracker_BL.Services.AdminService
             return false;
         }
 
+        public async Task<IEnumerable<UserForAdminViewDto>> GetAllUsers() =>
+             _mapper.Map<IEnumerable<UserForAdminViewDto>>(await _userRepository.GetAllAsync());
     }
 }
