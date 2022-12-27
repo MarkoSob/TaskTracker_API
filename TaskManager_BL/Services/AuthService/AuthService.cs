@@ -9,6 +9,7 @@ using TaskTracker_DAL.Entities;
 using TaskTracker_DAL.RolesHelper;
 using TaskTracker_DAL.GenericRepository;
 using TaskTracker_DAL.BasicGenericRepository;
+using Microsoft.Extensions.Logging;
 
 namespace TaskTracker_BL.Services
 {
@@ -25,15 +26,20 @@ namespace TaskTracker_BL.Services
         private readonly IRolesHelper _rolesHelper;
         private readonly IQueryService _queryService;
         private readonly IGeneratorService _generatorService;
-        public AuthService(IGenericRepository<User> userRepository,
-            IMapper mapper, ITokenService tokenService,
-            IHashService hashService, ISmtpService googleSmtpService,
+        private readonly ILogger<AuthService> _logger;
+        public AuthService(
+            IGenericRepository<User> userRepository,
+            IMapper mapper, 
+            ITokenService tokenService,
+            IHashService hashService, 
+            ISmtpService googleSmtpService,
             IGenericRepository<EmailStatus> emailStatusRepository,
             IBasicGenericRepository<UserRoles> userRolesRepository,
             IGenericRepository<Role> roleRepository,
             IRolesHelper rolesHelper,
             IQueryService queryService,
-            IGeneratorService generatorService)
+            IGeneratorService generatorService,
+            ILogger<AuthService> logger)
         {
             _googleSmtpService = googleSmtpService;
             _userRepository = userRepository;
@@ -46,6 +52,7 @@ namespace TaskTracker_BL.Services
             _rolesHelper = rolesHelper;
             _queryService = queryService;
             _generatorService = generatorService;
+            _logger = logger;
         }
 
         public async Task RegisterAsync(RegistrationDto registartionDto, UriBuilder uriBuilder)
@@ -69,6 +76,8 @@ namespace TaskTracker_BL.Services
                 });
 
             await _googleSmtpService.SendEmailAsync(user.Email!, "Email confirmation", uriBuilder.Uri.ToString());
+
+            _logger.LogInformation($"Confirmation email was sent to {user.Email}");
         }
 
         public async Task<bool> ChangePasswordAsync(string email, string currentPasswoord, string newPassword)
@@ -81,8 +90,12 @@ namespace TaskTracker_BL.Services
 
                 await _userRepository.UpdateAsync(currentUser);
 
+                _logger.LogInformation($"User {currentUser.Email} changed password");
+
                 return true;
             }
+
+            _logger.LogInformation($"User {currentUser.Email} tried to change the password without success");
 
             return false;
         }
@@ -99,6 +112,8 @@ namespace TaskTracker_BL.Services
                 await _userRepository.UpdateAsync(currentUser);
 
                 _googleSmtpService.SendEmailAsync(currentUser.Email, "New temporary password", "Your new temporary password: " + password);
+
+                _logger.LogInformation($"User {email} reset password");
 
                 return true;
             }
@@ -121,11 +136,15 @@ namespace TaskTracker_BL.Services
             {
                 if (_hashService.ValidateHash(credentialsDto.Password!, userWithRolesDto.User.Password!))
                 {
+                    _logger.LogInformation($"User {credentialsDto.Login} logged in");
+
                     return _tokenService.GenerateToken(userWithRolesDto.User.Email!, userWithRolesDto.UserRoles);
                 }
             }
 
-            return null;
+            _logger.LogInformation($"User {credentialsDto.Login} tried to log in without success");
+
+            return string.Empty;
         }
 
         public async Task<bool> ConfirmEmailAsync(string email, string key)
@@ -148,8 +167,12 @@ namespace TaskTracker_BL.Services
                     RoleId = roleId,
                 });
 
+                _logger.LogInformation($"User {email} confirmed email");
+
                 return true;
             }
+
+            _logger.LogInformation($"User {email} tried to confirm email without success");
 
             return false;
         }

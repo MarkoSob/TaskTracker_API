@@ -53,7 +53,6 @@ namespace TaskTracker.Controllers
 
         public async Task<IActionResult> LoginAsync(CredentialsDto credentialsDto)
         {
-            _logger.LogInformation("{@user} logged in", credentialsDto);
             return Ok(await _authService.LoginAsync(credentialsDto));
         }
 

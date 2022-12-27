@@ -7,9 +7,9 @@ namespace TaskTracker.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = RolesList.Admin)]
     public class AdminController : ControllerBase
     {
-
         private readonly IAdminService _adminService;
 
         public AdminController(IAdminService adminService)
@@ -17,7 +17,6 @@ namespace TaskTracker.Controllers
             _adminService = adminService;
         }
 
-        [Authorize(Roles = RolesList.Admin)]
         [HttpPost("GiveRole")]
         public async Task<IActionResult> GiveRoleAsync(Guid id, string role)
         {
@@ -25,18 +24,14 @@ namespace TaskTracker.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = RolesList.Admin)]
         [HttpPost("RemoveRole")]
         public async Task<IActionResult> RemoveRoleAsync(Guid id, string role) =>
             Ok(await _adminService.RemoveRoleAsync(id, role));
     
-
-        //[Authorize(Roles = RolesList.Admin)]
         [HttpPut("BlokedStatus")]
-        public async Task<IActionResult> SetUserBlockedStatusAsync(string email, bool isBlocked) =>
-            Ok(await _adminService.SetUserBlockedStatusAsync(email, isBlocked));
+        public async Task<IActionResult> SetUserBlockedStatusAsync(Guid id, bool isBlocked) =>
+            Ok(await _adminService.SetUserBlockedStatusAsync(id, isBlocked));
 
-        [Authorize(Roles = RolesList.Admin)]
         [HttpGet("Users")]
         public async Task<IActionResult> GetAllUsers() =>
             Ok(await _adminService.GetAllUsers());

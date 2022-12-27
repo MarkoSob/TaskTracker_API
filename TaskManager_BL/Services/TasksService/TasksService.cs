@@ -38,12 +38,14 @@ namespace TaskTracker_BL.Services.TasksService
             {
                 _logger.LogAndThrowException(new ObjectNotFoundException(typeof(User)));
             }
-
+            
             UserTask newUserTask = _mapper.Map<UserTask>(createUserTaskDto);
             newUserTask.User = user;
             newUserTask.Status = UserTaskStatus.New;
 
-            return _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.CreateAsync(newUserTask));
+            var createdUserTask = _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.CreateAsync(newUserTask));
+
+            return createdUserTask;
         }
 
         public async Task<IEnumerable<UserTaskDto>> GetAllAsync() =>
