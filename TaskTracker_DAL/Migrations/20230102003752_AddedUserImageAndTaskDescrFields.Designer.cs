@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskTracker_DAL;
 
@@ -11,9 +12,10 @@ using TaskTracker_DAL;
 namespace TaskTracker_DAL.Migrations
 {
     [DbContext(typeof(EfDbContext))]
-    partial class EfDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230102003752_AddedUserImageAndTaskDescrFields")]
+    partial class AddedUserImageAndTaskDescrFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,6 +103,9 @@ namespace TaskTracker_DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ProfileImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -120,29 +125,6 @@ namespace TaskTracker_DAL.Migrations
                             LastName = "Reb",
                             Password = "FqVMUXnOTR7E35PcCLEFYLtpRq/fNRU6ceEA9DMhxvY="
                         });
-                });
-
-            modelBuilder.Entity("TaskTracker_DAL.Entities.UserImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserImages");
                 });
 
             modelBuilder.Entity("TaskTracker_DAL.Entities.UserRoles", b =>
@@ -214,17 +196,6 @@ namespace TaskTracker_DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TaskTracker_DAL.Entities.UserImage", b =>
-                {
-                    b.HasOne("TaskTracker_DAL.Entities.User", "User")
-                        .WithOne("UserImage")
-                        .HasForeignKey("TaskTracker_DAL.Entities.UserImage", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TaskTracker_DAL.Entities.UserRoles", b =>
                 {
                     b.HasOne("TaskTracker_DAL.Entities.Role", "Role")
@@ -260,9 +231,6 @@ namespace TaskTracker_DAL.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("Tasks");
-
-                    b.Navigation("UserImage")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

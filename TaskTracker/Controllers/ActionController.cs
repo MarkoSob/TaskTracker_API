@@ -15,6 +15,7 @@ namespace TaskTracker.Controllers
         {
             _cachingService = cachingService;
         }
+
         [HttpGet]
         public async Task<IActionResult> SetValue()
         {

@@ -6,7 +6,8 @@ namespace TaskTracker_DAL.Entities
     {
         [StringLength(20, MinimumLength = 1)]
         [Required]
-        public string Title { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
@@ -14,6 +15,6 @@ namespace TaskTracker_DAL.Entities
         public UserTaskStatus Status { get; set; }
         public UserTaskPriority Priority { get; set; }
         public Guid UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 }

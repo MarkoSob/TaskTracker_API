@@ -45,6 +45,8 @@ namespace TaskTracker_BL.Services.TasksService
 
             var createdUserTask = _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.CreateAsync(newUserTask));
 
+            _logger.LogInformation($"The task {newUserTask.Title} with id {newUserTask.Id} was created");
+
             return createdUserTask;
         }
 
@@ -95,7 +97,11 @@ namespace TaskTracker_BL.Services.TasksService
             userTask.Id = (Guid)id;
             userTask.User = user;
 
-            return _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.UpdateAsync(userTask));
+            var updatedUserTask = _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.UpdateAsync(userTask));
+
+            _logger.LogInformation($"The task {updatedUserTask.Title} with id {updatedUserTask.Id} was updated");
+
+            return updatedUserTask;
         }
 
         public async Task<UserTaskDto> DeleteAsync(Guid? id)
@@ -105,7 +111,11 @@ namespace TaskTracker_BL.Services.TasksService
                 _logger.LogAndThrowException(new NullIdException());
             }
 
-            return _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.DeleteAsync(id));
+            var deletedUserTask = _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.DeleteAsync(id));
+
+            _logger.LogInformation($"The task {deletedUserTask.Title} with id {deletedUserTask.Id} was deleted");
+
+            return deletedUserTask;
         }
     }         
 }

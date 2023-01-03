@@ -12,13 +12,10 @@ namespace TaskTracker.Controllers
         private const string ConfirmationRoute = "confrimation";
 
         private readonly IAuthService _authService;
-        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService,
-            ILogger<AuthController> logger)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _logger = logger;
         }
 
         [HttpPost("register")]
@@ -50,14 +47,11 @@ namespace TaskTracker.Controllers
         }
 
         [HttpPost("login")]
-
-        public async Task<IActionResult> LoginAsync(CredentialsDto credentialsDto)
-        {
-            return Ok(await _authService.LoginAsync(credentialsDto));
-        }
+        public async Task<IActionResult> LoginAsync(CredentialsDto credentialsDto) =>
+             Ok(await _authService.LoginAsync(credentialsDto));
 
         [HttpGet(ConfirmationRoute)]
-        public async Task<IActionResult> ConfirmEmailAsync(string email, string key)
-            => Ok(await _authService.ConfirmEmailAsync(email, key));
+        public async Task<IActionResult> ConfirmEmailAsync(string email, string key) => 
+            Ok(await _authService.ConfirmEmailAsync(email, key));
     }
 }

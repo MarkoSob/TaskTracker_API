@@ -16,6 +16,7 @@ namespace TaskTracker_DAL.Entities
         public string? Password { get; set; }
         [Required]
         public DateTime CreationDate { get; set; }
+        public UserImage UserImage { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsDeleted { get; set; }
         public ICollection<UserRoles>? Roles { get; set; }

@@ -63,6 +63,8 @@ namespace TaskTracker_BL.Services
 
             await _userRepository.CreateAsync(user);
 
+            _logger.LogInformation($"User {user.Id} was registered");
+
             string emailKey = _generatorService.GetRandomKey();
 
             _queryService.AddQueryParams(uriBuilder, _queryService.CreateQueryParams(user.Email!, emailKey));
@@ -117,6 +119,8 @@ namespace TaskTracker_BL.Services
 
                 return true;
             }
+
+            _logger.LogInformation($"User {email} tried to reset password without success");
 
             return false;
         }

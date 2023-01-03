@@ -7,6 +7,8 @@ using TaskTracker_DAL.BasicGenericRepository;
 using TaskTracker_DAL.RolesHelper;
 using System.Linq.Expressions;
 using TaskTracker_BL.Services.AdminService;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
 
 namespace TaskTracker_BL_Tests
 {
@@ -14,9 +16,11 @@ namespace TaskTracker_BL_Tests
     {
         private Fixture _fixture;
         private Mock<IRolesHelper> _rolesHelper;
+        private Mock<IMapper> _mapper;
         private Mock<IBasicGenericRepository<UserRoles>> _userRolesRepository;
         private Mock<IGenericRepository<Role>> _rolesRepository;
         private Mock<IGenericRepository<User>> _userRepository;
+        private Mock<ILogger<AdminService>> _logger;
 
         [SetUp]
         public void Setup()
@@ -25,11 +29,12 @@ namespace TaskTracker_BL_Tests
             _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            
+            _mapper = new Mock<IMapper>();
             _rolesHelper = new Mock<IRolesHelper>();
             _userRolesRepository = new Mock<IBasicGenericRepository<UserRoles>>();
             _rolesRepository = new Mock<IGenericRepository<Role>>();
             _userRepository = new Mock<IGenericRepository<User>>();
+            _logger = new Mock<ILogger<AdminService>>();
 
         }
 
@@ -39,7 +44,9 @@ namespace TaskTracker_BL_Tests
                 _userRolesRepository.Object,
                 _rolesRepository.Object,
                 _userRepository.Object,
-                _rolesHelper.Object
+                _rolesHelper.Object,
+                _mapper.Object,
+                _logger.Object
                 );
         }
 

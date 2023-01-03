@@ -8,7 +8,7 @@ namespace TaskTracker.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-  
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly ITasksService _taskTrackerService;
@@ -34,9 +34,8 @@ namespace TaskTracker.Controllers
         //public async Task<IEnumerable<UserTaskDto>> GetAllUserTasksAsync(string email)
         //    => await _taskTrackerService.GetAllUserTasksAsync(email);
 
-        [Authorize]
         [HttpGet("UserTasks")]
-        public async Task<IActionResult> GetAllUserTasksByAsync(string email, [FromQuery] QueryParameters<UserTaskDto> parameters)
+        public async Task<IActionResult> GetAllUserTasksAsync(string email, [FromQuery] QueryParameters<UserTaskDto> parameters)
             => Ok(await _taskTrackerService.GetTasksByTitle(email, parameters));
 
         [HttpGet("{id}")]

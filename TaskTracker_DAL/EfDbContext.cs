@@ -12,6 +12,7 @@ namespace TaskTracker_DAL
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRoles> UserRolesList { get; set; }
         public DbSet<EmailStatus> EmailStatuses { get; set; }
+        public DbSet<UserImage> UserImages { get; set; }
 
         public EfDbContext(DbContextOptions options, IRolesHelper rolesHelper) : base(options)
         {

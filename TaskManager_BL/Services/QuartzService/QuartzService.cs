@@ -39,6 +39,8 @@ namespace TaskTracker_BL.Services.QuartzService
                        .WithIntervalInSeconds(startJobRequest.IntervalInSeconds)
                        .WithRepeatCount(startJobRequest.IntervalInSeconds))
                    .Build());
+
+            _logger.LogInformation($"The job {startJobRequest.JobTitle} was launched");
         }
 
         public async Task StopJob(string jobName)
@@ -47,6 +49,8 @@ namespace TaskTracker_BL.Services.QuartzService
             JobKey key = new JobKey(jobName);
 
             await scheduler.PauseJob(key);
+
+            _logger.LogInformation($"The job {jobName} was stopped");
         }
 
         public async Task ResumeJob(string jobName)
@@ -55,6 +59,8 @@ namespace TaskTracker_BL.Services.QuartzService
             JobKey key = new JobKey(jobName);
 
             await scheduler.ResumeJob(key);
+
+            _logger.LogInformation($"The job {jobName} continue to execute");
         }
 
         public async Task DeleteJob(string jobName)
@@ -63,6 +69,8 @@ namespace TaskTracker_BL.Services.QuartzService
             JobKey key = new JobKey(jobName);
 
             await scheduler.DeleteJob(key);
+
+            _logger.LogInformation($"The job {jobName} was removed");
         }
 
     }

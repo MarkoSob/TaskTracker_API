@@ -14,6 +14,7 @@ using TaskTracker_DAL.GenericRepository;
 using TaskTracker_DAL.BasicGenericRepository;
 using TaskTracker_DAL.RolesHelper;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
 
 namespace TaskTracker_BL_Tests
 {
@@ -31,6 +32,7 @@ namespace TaskTracker_BL_Tests
         private Mock<IGenericRepository<Role>> _rolesRepository;
         private Mock<IQueryService> _queryService;
         private Mock<IGeneratorService> _generatorService;
+        private Mock<ILogger<AuthService>> _logger;
 
         [SetUp]
         public void Setup()
@@ -50,11 +52,13 @@ namespace TaskTracker_BL_Tests
             _rolesRepository = new Mock<IGenericRepository<Role>>();
             _queryService = new Mock<IQueryService>();
             _generatorService = new Mock<IGeneratorService>();
+            _logger = new Mock<ILogger<AuthService>>();
         }
 
         public AuthService GetAuthService()
         {
-            return new AuthService(_userRepository.Object,
+            return new AuthService(
+                _userRepository.Object,
                 _mapper.Object,
                 _tokenService.Object,
                 _hashService.Object,
@@ -64,7 +68,8 @@ namespace TaskTracker_BL_Tests
                 _rolesRepository.Object,
                 _rolesHelper.Object,
                 _queryService.Object,
-                _generatorService.Object);
+                _generatorService.Object,
+                _logger.Object);
         }
 
         [Test]
