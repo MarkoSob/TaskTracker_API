@@ -16,10 +16,17 @@ namespace TaskTracker.Controllers
             _cachingService = cachingService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SetValue()
+        [HttpPost]
+        public async Task<IActionResult> SetValue(string key, string value)
         {
-            _cachingService.SaveAsync("15", "60");
+            await _cachingService.SaveAsync(key, value);
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetValue(string key)
+        {
+            await _cachingService.GetAsync(key);
             return Ok();
         }
 

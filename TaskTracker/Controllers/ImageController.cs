@@ -1,9 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskTracker_BL.Services.ImageService;
 
 namespace FileUploadApp.Controllers
@@ -21,10 +16,18 @@ namespace FileUploadApp.Controllers
             _imageService = imageService;
         }
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> AddFile(IFormFile uploadedFile, string email)
+        [HttpPost("uploadImage")]
+        public async Task<IActionResult> AddImageAsync(IFormFile uploadedFile, string email)
         {
             var result = await _imageService.AddImageAsync(uploadedFile, email);
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetImagePathAsync(string email)
+        {
+            var result = await _imageService.GetImagePathAsync(email);
 
             return Ok(result);
         }

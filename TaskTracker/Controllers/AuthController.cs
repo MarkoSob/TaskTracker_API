@@ -22,11 +22,12 @@ namespace TaskTracker.Controllers
         public async Task<IActionResult> RegisterAsync(RegistrationDto registrationDto)
         {
             var contoller = Request.RouteValues["controller"]!.ToString();
-            UriBuilder uriBuilder = new UriBuilder(
-                Request.Scheme,
-                Request.Host.Host,
-                Request.Host.Port!.Value,
-                contoller + "/" + ConfirmationRoute);
+            UriBuilder uriBuilder = new UriBuilder()
+            {
+                Scheme = Request.Scheme,
+                Host = Request.Host.Host,
+                Path = contoller + "/" + ConfirmationRoute
+            };
             await _authService.RegisterAsync(registrationDto, uriBuilder);
             return Ok();
         }

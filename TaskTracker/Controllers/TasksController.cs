@@ -8,7 +8,7 @@ namespace TaskTracker.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    //[Authorize]
     public class TasksController : ControllerBase
     {
         private readonly ITasksService _taskTrackerService;

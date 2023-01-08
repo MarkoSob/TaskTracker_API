@@ -17,6 +17,8 @@ namespace TaskTracker_DAL
         public EfDbContext(DbContextOptions options, IRolesHelper rolesHelper) : base(options)
         {
             _rolesHelper = rolesHelper;
+            //Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

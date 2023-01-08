@@ -31,6 +31,7 @@ using TaskTracker_BL;
 using TaskTracker_BL.Services.CachingService;
 using StackExchange.Redis;
 using TaskTracker_BL.Services.ImageService;
+using TaskTracker;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, _, configuration) => configuration
@@ -56,10 +57,12 @@ builder.Services.Configure<HashOptions>(
     builder.Configuration.GetSection(nameof(HashOptions)));
 builder.Services.Configure<SmtpOptions>(
     builder.Configuration.GetSection(nameof(SmtpOptions)));
+builder.Services.Configure<ImgOptions>(
+    builder.Configuration.GetSection(nameof(ImgOptions)));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISmtpService, GoogleSmtpService>();
-builder.Services.AddScoped<IQuartzService, QuartzService>();
+//builder.Services.AddScoped<IQuartzService, QuartzService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<IImageService, ImageService>();
@@ -152,41 +155,41 @@ builder.Services.AddSwaggerGen(c => {
 
 builder.Services.AddScoped<ICachingService, CachingService>();
 builder.Services.AddScoped<IConnectionMultiplexer>(
-        x => ConnectionMultiplexer.Connect("localhost:5002"));
+        x => ConnectionMultiplexer.Connect("markotasktracker.redis.cache.windows.net"));
 
-builder.Services.AddQuartz(x =>
-{
-    x.UseMicrosoftDependencyInjectionJobFactory();
-    x.UsePersistentStore(q =>
-    {
-        q.UseSqlServer(sqlServer =>
-        {
-            sqlServer.ConnectionString = builder.Configuration.GetConnectionString("Default");
-            sqlServer.TablePrefix = "QRTZ_";
-        });
-        q.UseJsonSerializer();
-    });
-});
+//builder.Services.AddQuartz(x =>
+//{
+//    x.UseMicrosoftDependencyInjectionJobFactory();
+//    x.UsePersistentStore(q =>
+//    {
+//        q.UseSqlServer(sqlServer =>
+//        {
+//            sqlServer.ConnectionString = builder.Configuration.GetConnectionString("Default");
+//            sqlServer.TablePrefix = "QRTZ_";
+//        });
+//        q.UseJsonSerializer();
+//    });
+//});
 
-builder.Services.AddQuartzServer(options =>
-{
-    options.WaitForJobsToComplete = true;
-});
+//builder.Services.AddQuartzServer(options =>
+//{
+//    options.WaitForJobsToComplete = true;
+//});
 
-builder.Services.AddHangfire((configuration => configuration
-        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-        .UseSimpleAssemblyNameTypeSerializer()
-        .UseRecommendedSerializerSettings()
-        .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-        {
-            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-            QueuePollInterval = TimeSpan.Zero,
-            UseRecommendedIsolationLevel = true,
-            DisableGlobalLocks = true
-        })));
+//builder.Services.AddHangfire((configuration => configuration
+//        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+//        .UseSimpleAssemblyNameTypeSerializer()
+//        .UseRecommendedSerializerSettings()
+//        .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
+//        {
+//            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+//            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+//            QueuePollInterval = TimeSpan.Zero,
+//            UseRecommendedIsolationLevel = true,
+//            DisableGlobalLocks = true
+//        })));
 
-builder.Services.AddHangfireServer();
+//builder.Services.AddHangfireServer();
 var app = builder.Build();
 
 app.UseCors();
@@ -202,5 +205,5 @@ app.UseAuthorization();
 //app.UseMiddleware<CustomErrorHandlingMiddleware>();
 app.MapHub<SignalRChatHub>("/chat");
 app.MapControllers();
-
+app.MigrateDatabase();
 app.Run();
