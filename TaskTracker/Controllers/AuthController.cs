@@ -48,8 +48,11 @@ namespace TaskTracker.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(CredentialsDto credentialsDto) =>
-             Ok(await _authService.LoginAsync(credentialsDto));
+        public async Task<IActionResult> LoginAsync(CredentialsDto credentialsDto)
+        {
+            var result = await _authService.LoginAsync(credentialsDto);
+            return Ok(result);
+        }
 
         [HttpGet(ConfirmationRoute)]
         public async Task<IActionResult> ConfirmEmailAsync(string email, string key) => 

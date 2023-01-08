@@ -78,6 +78,10 @@ builder.Services.AddSingleton<IMessageSenderService, MessageSenderService>();
 builder.Services.AddSingleton<IConnectionStorage, ConnectionStorage>();
 builder.Services.AddSingleton<IMessageStorage, MessageStorage>();
 builder.Services.AddSingleton<IUserIdProvider, AppUser>();
+builder.Services.AddScoped<ICachingService, CachingService>();
+
+builder.Services.AddScoped<IConnectionMultiplexer>(
+        x => ConnectionMultiplexer.Connect("markotasktracker.redis.cache.windows.net:6380,password=3RTXs1PS3Uufm7ZknwQlnoD6NcAeb2tJYAzCaIFWcjo=,ssl=True,abortConnect=False"));
 
 builder.Services.AddCors(x =>
     x.AddDefaultPolicy(x => x
@@ -153,9 +157,7 @@ builder.Services.AddSwaggerGen(c => {
     });
 });
 
-builder.Services.AddScoped<ICachingService, CachingService>();
-builder.Services.AddScoped<IConnectionMultiplexer>(
-        x => ConnectionMultiplexer.Connect("markotasktracker.redis.cache.windows.net"));
+
 
 //builder.Services.AddQuartz(x =>
 //{

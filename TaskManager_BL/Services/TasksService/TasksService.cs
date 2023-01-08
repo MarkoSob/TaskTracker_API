@@ -38,11 +38,11 @@ namespace TaskTracker_BL.Services.TasksService
             {
                 _logger.LogAndThrowException(new ObjectNotFoundException(typeof(User)));
             }
-            
+
+            ValidateFields(createUserTaskDto);
+
             UserTask newUserTask = _mapper.Map<UserTask>(createUserTaskDto);
             newUserTask.User = user;
-            newUserTask.Status = UserTaskStatus.New;
-
             var createdUserTask = _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.CreateAsync(newUserTask));
 
             _logger.LogInformation($"The task {newUserTask.Title} with id {newUserTask.Id} was created");
@@ -92,6 +92,8 @@ namespace TaskTracker_BL.Services.TasksService
                 _logger.LogAndThrowException(new ObjectNotFoundException(typeof(User)));
             }
 
+            ValidateFields(createUserTaskDto);
+
             UserTask userTask = _mapper.Map<UserTask>(createUserTaskDto);
 
             userTask.Id = (Guid)id;
@@ -116,6 +118,29 @@ namespace TaskTracker_BL.Services.TasksService
             _logger.LogInformation($"The task {deletedUserTask.Title} with id {deletedUserTask.Id} was deleted");
 
             return deletedUserTask;
+        }
+
+        public void ValidateFields(CreateUserTaskDto createUserTaskDto)
+        {
+            if (string.IsNullOrEmpty(createUserTaskDto.Status))
+            {
+                createUserTaskDto.Status = UserTaskStatus.New.ToString();
+            }
+
+            if (string.IsNullOrEmpty(createUserTaskDto.Priority))
+            {
+                createUserTaskDto.Priority = UserTaskPriority.Low.ToString();
+            }
+
+            if (string.IsNullOrEmpty(createUserTaskDto.StartDate))
+            {
+                createUserTaskDto.StartDate = DateTime.Now.ToString("MM.dd.yyyy HH:mm");
+            }
+
+            if (string.IsNullOrEmpty(createUserTaskDto.EndDate))
+            {
+                createUserTaskDto.EndDate = DateTime.Now.ToString("MM.dd.yyyy HH:mm");
+            }
         }
     }         
 }

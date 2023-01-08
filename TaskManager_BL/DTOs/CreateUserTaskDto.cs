@@ -9,7 +9,6 @@ namespace TaskTracker_BL.DTOs
         [Required]
         public string? Title { get; set; }
         public string? Description { get; set; }
-        [Required]
         public string? StartDate { get; set; }
         public string? EndDate { get; set; }
         public string? Status { get; set; }

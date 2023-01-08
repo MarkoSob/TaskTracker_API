@@ -26,8 +26,8 @@ namespace TaskTracker.Controllers
         [HttpGet]
         public async Task<IActionResult> GetValue(string key)
         {
-            await _cachingService.GetAsync(key);
-            return Ok();
+            string result = await _cachingService.GetAsync(key);
+            return Ok(result);
         }
 
         [Authorize(Roles = RolesList.User)]
