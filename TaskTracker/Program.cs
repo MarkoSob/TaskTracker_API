@@ -32,6 +32,7 @@ using TaskTracker_BL.Services.CachingService;
 using StackExchange.Redis;
 using TaskTracker_BL.Services.ImageService;
 using TaskTracker;
+using TaskTracker_BL.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, _, configuration) => configuration
@@ -66,6 +67,7 @@ builder.Services.AddScoped<ISmtpService, GoogleSmtpService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ITasksService, TasksService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped(typeof(IBasicGenericRepository<>), typeof(BasicGenericRepository<>));
 

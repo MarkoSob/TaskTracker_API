@@ -13,6 +13,11 @@ namespace TaskTracker_BL.Profiles
             CreateMap<User, UserForAdminViewDto>()
                 .ForMember(x => x.CreationDate, opt => opt.MapFrom(
                     d => d.CreationDate.ToString("MM.dd.yyyy HH:mm")));
+
+            CreateMap<User, UserProfileDataDto>()
+               .ForMember(x => x.CreationDate, opt => opt.MapFrom(
+                   d => d.CreationDate.ToString("MM.dd.yyyy HH:mm")));
         }
     }
+    
 }

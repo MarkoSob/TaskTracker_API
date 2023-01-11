@@ -64,7 +64,7 @@ namespace TaskTracker_BL.Services
 
             _logger.LogInformation($"User {user.Id} was registered");
 
-            string emailKey = _generatorService.GetRandomKey();
+            string emailKey = _generatorService.GetRandomKey().ToLower();
 
             _queryService.AddQueryParams(uriBuilder, _queryService.CreateQueryParams(user.Email!, emailKey));
 
