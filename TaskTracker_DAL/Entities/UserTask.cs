@@ -11,6 +11,7 @@ namespace TaskTracker_DAL.Entities
         [Required]
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public DateTime CreationDate { get; set; }
         public UserTaskStatus Status { get; set; }
         public UserTaskPriority Priority { get; set; }
         public Guid UserId { get; set; }

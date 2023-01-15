@@ -43,6 +43,8 @@ namespace TaskTracker_BL.Services.TasksService
 
             UserTask newUserTask = _mapper.Map<UserTask>(createUserTaskDto);
             newUserTask.User = user;
+            newUserTask.CreationDate = DateTime.Now;
+
             var createdUserTask = _mapper.Map<UserTaskDto>(await _genericUserTaskRepository.CreateAsync(newUserTask));
 
             _logger.LogInformation($"The task {newUserTask.Title} with id {newUserTask.Id} was created");
@@ -124,12 +126,12 @@ namespace TaskTracker_BL.Services.TasksService
         {
             if (string.IsNullOrEmpty(createUserTaskDto.Status))
             {
-                createUserTaskDto.Status = UserTaskStatus.New.ToString();
+                createUserTaskDto.Status = UserTaskStatus.None.ToString();
             }
 
             if (string.IsNullOrEmpty(createUserTaskDto.Priority))
             {
-                createUserTaskDto.Priority = UserTaskPriority.Low.ToString();
+                createUserTaskDto.Priority = UserTaskPriority.None.ToString();
             }
 
             if (string.IsNullOrEmpty(createUserTaskDto.StartDate))
