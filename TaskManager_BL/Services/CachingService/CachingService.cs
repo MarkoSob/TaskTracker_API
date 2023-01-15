@@ -27,7 +27,7 @@ namespace TaskTracker_BL.Services.CachingService
 
         public async Task SaveAsync(string key, string value)
         {
-            await _database.StringSetAsync(key, value, TimeSpan.FromMilliseconds(50_500));
+            await _database.StringSetAsync(key, value, TimeSpan.FromMilliseconds(500_000));
         }
 
 

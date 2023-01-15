@@ -10,6 +10,7 @@ using TaskTracker_DAL.RolesHelper;
 using TaskTracker_DAL.GenericRepository;
 using TaskTracker_DAL.BasicGenericRepository;
 using Microsoft.Extensions.Logging;
+using TaskTracker.Core.Exceptions.DataAccessExceptions;
 
 namespace TaskTracker_BL.Services
 {
@@ -21,7 +22,6 @@ namespace TaskTracker_BL.Services
         private readonly IHashService _hashService;
         private readonly ISmtpService _googleSmtpService;
         private readonly IGenericRepository<EmailStatus> _emailStatusRepository;
-        private readonly IGenericRepository<Role> _roleRepository;
         private readonly IBasicGenericRepository<UserRoles> _userRolesRepository;
         private readonly IRolesHelper _rolesHelper;
         private readonly IQueryService _queryService;
@@ -35,7 +35,6 @@ namespace TaskTracker_BL.Services
             ISmtpService googleSmtpService,
             IGenericRepository<EmailStatus> emailStatusRepository,
             IBasicGenericRepository<UserRoles> userRolesRepository,
-            IGenericRepository<Role> roleRepository,
             IRolesHelper rolesHelper,
             IQueryService queryService,
             IGeneratorService generatorService,
@@ -48,7 +47,6 @@ namespace TaskTracker_BL.Services
             _hashService = hashService;
             _emailStatusRepository = emailStatusRepository;
             _userRolesRepository = userRolesRepository;
-            _roleRepository = roleRepository;
             _rolesHelper = rolesHelper;
             _queryService = queryService;
             _generatorService = generatorService;
@@ -60,12 +58,13 @@ namespace TaskTracker_BL.Services
             var user = _mapper.Map<User>(registartionDto);
             user.CreationDate = DateTime.Now;
             user.Password = _hashService.GetHash(user.Password!);
+            user.Email = user.Email?.ToLower();
 
             await _userRepository.CreateAsync(user);
 
             _logger.LogInformation($"User {user.Id} was registered");
 
-            string emailKey = _generatorService.GetRandomKey();
+            string emailKey = _generatorService.GetRandomKey().ToLower();
 
             _queryService.AddQueryParams(uriBuilder, _queryService.CreateQueryParams(user.Email!, emailKey));
 
@@ -84,9 +83,9 @@ namespace TaskTracker_BL.Services
 
         public async Task<bool> ChangePasswordAsync(string email, string currentPasswoord, string newPassword)
         {
-            User currentUser =  _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
+            User? currentUser = _userRepository.GetByPredicate(x => x.Email == email.ToLower()).FirstOrDefault();
 
-            if (currentUser.Password == _hashService.GetHash(currentPasswoord))
+            if (currentUser?.Password == _hashService.GetHash(currentPasswoord))
             {
                 currentUser.Password = _hashService.GetHash(newPassword);
 
@@ -104,7 +103,7 @@ namespace TaskTracker_BL.Services
 
         public async Task<bool> ResetPasswordAsync(string email)
         {
-            User currentUser = _userRepository.GetByPredicate(x => x.Email == email).FirstOrDefault();
+            User? currentUser = _userRepository.GetByPredicate(x => x.Email == email.ToLower()).FirstOrDefault();
 
             if (currentUser != null)
             {
@@ -113,7 +112,7 @@ namespace TaskTracker_BL.Services
 
                 await _userRepository.UpdateAsync(currentUser);
 
-                _googleSmtpService.SendEmailAsync(currentUser.Email, "New temporary password", "Your new temporary password: " + password);
+                _googleSmtpService?.SendEmailAsync(currentUser.Email, "New temporary password", "Your new temporary password: " + password);
 
                 _logger.LogInformation($"User {email} reset password");
 
@@ -128,7 +127,7 @@ namespace TaskTracker_BL.Services
         public async Task<string> LoginAsync(CredentialsDto credentialsDto)
         {
             var userWithRolesDto = _userRepository
-                .GetByPredicate(x => x.Email == credentialsDto.Login)
+                .GetByPredicate(x => x.Email == credentialsDto.Login!.ToLower())
                 .Select(x => new UserWithRolesDto
                 {
                     User = x,
@@ -148,13 +147,13 @@ namespace TaskTracker_BL.Services
 
             _logger.LogInformation($"User {credentialsDto.Login} tried to log in without success");
 
-            return string.Empty;
+            throw new ObjectNotFoundException(typeof(UserWithRolesDto));
         }
 
         public async Task<bool> ConfirmEmailAsync(string email, string key)
         {
             var emailStatus = _emailStatusRepository
-                .GetByPredicate(x => x.User.Email == email && x.Key == key)
+                .GetByPredicate(x => x.User!.Email == email.ToLower() && x.Key == key)
                 .FirstOrDefault();
 
             if (emailStatus != null)

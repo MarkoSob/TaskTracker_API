@@ -22,11 +22,12 @@ namespace TaskTracker.Controllers
         public async Task<IActionResult> RegisterAsync(RegistrationDto registrationDto)
         {
             var contoller = Request.RouteValues["controller"]!.ToString();
-            UriBuilder uriBuilder = new UriBuilder(
-                Request.Scheme,
-                Request.Host.Host,
-                Request.Host.Port!.Value,
-                contoller + "/" + ConfirmationRoute);
+            UriBuilder uriBuilder = new UriBuilder()
+            {
+                Scheme = Request.Scheme,
+                Host = Request.Host.Host,
+                Path = contoller + "/" + ConfirmationRoute
+            };
             await _authService.RegisterAsync(registrationDto, uriBuilder);
             return Ok();
         }
@@ -47,8 +48,11 @@ namespace TaskTracker.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(CredentialsDto credentialsDto) =>
-             Ok(await _authService.LoginAsync(credentialsDto));
+        public async Task<IActionResult> LoginAsync(CredentialsDto credentialsDto)
+        {
+            var result = await _authService.LoginAsync(credentialsDto);
+            return Ok(result);
+        }
 
         [HttpGet(ConfirmationRoute)]
         public async Task<IActionResult> ConfirmEmailAsync(string email, string key) => 

@@ -29,7 +29,6 @@ namespace TaskTracker_BL_Tests
         private Mock<ISmtpService> _smtpService;
         private Mock<IRolesHelper> _rolesHelper;
         private Mock<IBasicGenericRepository<UserRoles>> _userRolesRepository;
-        private Mock<IGenericRepository<Role>> _rolesRepository;
         private Mock<IQueryService> _queryService;
         private Mock<IGeneratorService> _generatorService;
         private Mock<ILogger<AuthService>> _logger;
@@ -49,7 +48,6 @@ namespace TaskTracker_BL_Tests
             _smtpService = new Mock<ISmtpService>();
             _rolesHelper = new Mock<IRolesHelper>();
             _userRolesRepository = new Mock<IBasicGenericRepository<UserRoles>>();
-            _rolesRepository = new Mock<IGenericRepository<Role>>();
             _queryService = new Mock<IQueryService>();
             _generatorService = new Mock<IGeneratorService>();
             _logger = new Mock<ILogger<AuthService>>();
@@ -65,7 +63,6 @@ namespace TaskTracker_BL_Tests
                 _smtpService.Object,
                 _emailStatusRepository.Object,
                 _userRolesRepository.Object,
-                _rolesRepository.Object,
                 _rolesHelper.Object,
                 _queryService.Object,
                 _generatorService.Object,
