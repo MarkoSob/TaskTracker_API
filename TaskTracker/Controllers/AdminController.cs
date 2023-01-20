@@ -7,7 +7,7 @@ namespace TaskTracker.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = RolesList.Admin)]
+   // [Authorize(Roles = RolesList.Admin)]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;

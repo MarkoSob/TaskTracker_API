@@ -143,6 +143,11 @@ namespace TaskTracker_BL.Services.TasksService
             {
                 createUserTaskDto.EndDate = DateTime.Now.ToString("MM.dd.yyyy HH:mm");
             }
+
+            if (createUserTaskDto.StartDate.CompareTo(createUserTaskDto.EndDate) > 0)
+            {
+                _logger.LogAndThrowException(new InvalidParameterExeption(createUserTaskDto, "End Date", "Start date must precede end date"));
+            }
         }
     }         
 }

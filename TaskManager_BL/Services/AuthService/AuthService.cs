@@ -121,7 +121,7 @@ namespace TaskTracker_BL.Services
 
             _logger.LogInformation($"User {email} tried to reset password without success");
 
-            return false;
+            throw new ObjectNotFoundException(typeof(User));
         }
 
         public async Task<string> LoginAsync(CredentialsDto credentialsDto)

@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskTracker.Core.Exceptions.DataAccessExceptions;
+using TaskTracker.Core.Exceptions.DomainExceptions;
 using TaskTracker.Core.Extensions;
 using TaskTracker_BL.DTOs;
 using TaskTracker_DAL.Entities;
@@ -41,6 +37,31 @@ namespace TaskTracker_BL.Services.UserService
             var userData = _mapper.Map<UserProfileDataDto>(user);
 
             return userData;
+
+        }
+
+        public async Task<UserProfileDataDto> UpdateUserDataAsync(Guid? id, UserDataForUpdateDto user)
+        {
+            if (id is null)
+            {
+                _logger.LogAndThrowException(new NullIdException());
+            }
+
+            if (user is null)
+            {
+                _logger.LogAndThrowException(new ObjectNotFoundException(typeof(UserProfileDataDto)));
+            }
+
+            User userForUpdate = await _userRepository.GetByPredicate(u => u.Id == id).FirstOrDefaultAsync();
+
+            userForUpdate.FirstName = user.FirstName;
+            userForUpdate.LastName = user.LastName;
+
+            var updatedUser = _mapper.Map<UserProfileDataDto>(await _userRepository.UpdateAsync(userForUpdate));
+
+            _logger.LogInformation($"The user {updatedUser.Email} with id {updatedUser.Id} was updated");
+
+            return updatedUser;
         }
     }
 }
